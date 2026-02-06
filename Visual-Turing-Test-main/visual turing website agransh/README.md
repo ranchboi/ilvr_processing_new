@@ -59,7 +59,7 @@ Open [http://localhost:3000](http://localhost:3000)
 2. **Clicks "Proceed"** → Goes to Classify page
 3. **First visit to Classify** → API assigns next radiologist ID (A, B, C, ...), stored in sessionStorage
 4. **User completes form** → Selects Real/Fake for each scan, marks areas if Fake
-5. **Clicks "Get Results"** → Responses saved to database, redirects to Thanks page
+5. **Clicks "Submit"** → Responses saved to database, redirects to Thanks page
 6. **Next person opens link** → Gets the next radiologist ID (B, C, D, ...)
 
 ## Admin Panel

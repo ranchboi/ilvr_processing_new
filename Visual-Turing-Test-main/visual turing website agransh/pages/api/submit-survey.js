@@ -65,14 +65,14 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ message: 'Response saved successfully' });
   } catch (err) {
-    console.error('Error saving response:', err);
-    const detail = err.cause?.message || err.cause?.code || err.message;
+    const causeMsg = err.cause?.message || err.cause?.code || '';
+    console.error('Error saving response:', err.message, causeMsg || '', err.cause);
     const hint = err.message === 'fetch failed'
-      ? 'Check: (1) Supabase URL is https://xxx.supabase.co with no typo, (2) Service role key is correct and has no extra spaces, (3) Supabase project is not paused (Dashboard → Project Settings → General).'
+      ? 'Check: (1) Vercel env vars: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY set for Production, (2) Supabase URL is https://xxx.supabase.co with no typo, (3) Service role key has no extra spaces/newlines, (4) Supabase project is not paused (Dashboard → Project Settings → General). Redeploy after changing env vars.'
       : '';
     return res.status(500).json({
       error: err.message,
-      detail: detail !== err.message ? detail : undefined,
+      detail: causeMsg || undefined,
       hint: hint || undefined,
     });
   }

@@ -13,16 +13,10 @@ import AreaComponent from "../components/AreaComponent";
 import { useRouter } from "next/router";
 import { saveRadiologistResponse, getRadiologistResponses } from "../utils/storage";
 
-// Scan configuration: 15 scans, 8 images each (PNG format)
-// Order: 1 Real(w/o patho), 2 Real(w patho), 3 Real(w patho), 4–5 Gen, 6 Real(w patho), 7–11 Gen, 12 Real(w patho), 13 Gen, 14 Real(w patho), 15 Real(w/o patho)
-const REAL_WO_PATHO = ["1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png"];
-const GENERATED = ["3.png", "5.png", "7.png", "8.png", "11.png", "13.png", "14.png", "v7.png"];
-// Real with patho: 8 slice divisions of the same volume per scan (30, 28, 36, 26, 18 = one volume each)
-const REAL_WITH_PATHO_30 = ["30_0.png", "30_1.png", "30_2.png", "30_3.png", "30_4.png", "30_5.png", "30_6.png", "30_7.png"];
-const REAL_WITH_PATHO_28 = ["28_0.png", "28_1.png", "28_2.png", "28_3.png", "28_4.png", "28_5.png", "28_6.png", "28_7.png"];
-const REAL_WITH_PATHO_36 = ["36_0.png", "36_1.png", "36_2.png", "36_3.png", "36_4.png", "36_5.png", "36_6.png", "36_7.png"];
-const REAL_WITH_PATHO_26 = ["26_0.png", "26_1.png", "26_2.png", "26_3.png", "26_4.png", "26_5.png", "26_6.png", "26_7.png"];
-const REAL_WITH_PATHO_18 = ["18_0.png", "18_1.png", "18_2.png", "18_3.png", "18_4.png", "18_5.png", "18_6.png", "18_7.png"];
+// Scan configuration: 15 scans, 8 images each (1.png–8.png per scan)
+// Order: 1 Real(w/o patho), 2–3 Real(w patho), 4–5 Gen, 6 Real(w patho), 7–11 Gen, 12 Real(w patho), 13 Gen, 14 Real(w patho), 15 Real(w/o patho)
+// Images come from scripts/gif_to_15_scans.py: each scan_XX folder has 1.png..8.png (8 frames from one GIF).
+const SLICE_FILES = ["1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png"];
 
 function makeScanImages(filenames, folder, scanIdx) {
   return filenames.map((f, i) => ({
@@ -32,23 +26,23 @@ function makeScanImages(filenames, folder, scanIdx) {
   }));
 }
 
-// Build 15 scans with correct order and type
+// Build 15 scans: scan_01 .. scan_15, each with 1.png–8.png
 const SCAN_CONFIG = [
-  { type: "Real_wo_patho", folder: "Real_wo_patho", files: REAL_WO_PATHO },                    // 1 Real (w/o patho) – 8 slices same volume
-  { type: "Real_with_patho", folder: "Real_with_patho", files: REAL_WITH_PATHO_30 },           // 2 Real (with patho) – 8 slices from 30.npy
-  { type: "Real_with_patho", folder: "Real_with_patho", files: REAL_WITH_PATHO_28 },           // 3 Real (with patho) – 8 slices from 28.npy
-  { type: "Generated", folder: "Generated", files: GENERATED },                               // 4 Generated
-  { type: "Generated", folder: "Generated", files: ["v8.png", "v11.png", "v12.png", "v14.png", "v16.png", "3.png", "5.png", "7.png"] }, // 5 Generated
-  { type: "Real_with_patho", folder: "Real_with_patho", files: REAL_WITH_PATHO_36 },           // 6 Real (with patho) – 8 slices from 36.npy
-  { type: "Generated", folder: "Generated", files: ["8.png", "11.png", "13.png", "14.png", "v7.png", "v8.png", "v11.png", "v12.png"] },   // 7 Generated
-  { type: "Generated", folder: "Generated", files: ["v14.png", "v16.png", "3.png", "5.png", "7.png", "8.png", "11.png", "13.png"] },       // 8 Generated
-  { type: "Generated", folder: "Generated", files: ["14.png", "v7.png", "v8.png", "v11.png", "v12.png", "v14.png", "v16.png", "3.png"] }, // 9 Generated
-  { type: "Generated", folder: "Generated", files: ["5.png", "7.png", "8.png", "11.png", "13.png", "14.png", "v7.png", "v8.png"] },         // 10 Generated
-  { type: "Generated", folder: "Generated", files: ["v11.png", "v12.png", "v14.png", "v16.png", "3.png", "5.png", "7.png", "8.png"] },     // 11 Generated
-  { type: "Real_with_patho", folder: "Real_with_patho", files: REAL_WITH_PATHO_26 },           // 12 Real (with patho) – 8 slices from 26.npy
-  { type: "Generated", folder: "Generated", files: ["11.png", "13.png", "14.png", "v7.png", "v8.png", "v11.png", "v12.png", "v14.png"] }, // 13 Generated
-  { type: "Real_with_patho", folder: "Real_with_patho", files: REAL_WITH_PATHO_18 },           // 14 Real (with patho) – 8 slices from 18.npy
-  { type: "Real_wo_patho", folder: "Real_wo_patho", files: REAL_WO_PATHO },                    // 15 Real (w/o patho) – 8 slices same volume
+  { type: "Real_wo_patho", folder: "scan_01", files: SLICE_FILES },   // 1 Real (w/o patho)
+  { type: "Real_with_patho", folder: "scan_02", files: SLICE_FILES }, // 2 Real (with patho)
+  { type: "Real_with_patho", folder: "scan_03", files: SLICE_FILES }, // 3 Real (with patho)
+  { type: "Generated", folder: "scan_04", files: SLICE_FILES },       // 4 Generated
+  { type: "Generated", folder: "scan_05", files: SLICE_FILES },       // 5 Generated
+  { type: "Real_with_patho", folder: "scan_06", files: SLICE_FILES }, // 6 Real (with patho)
+  { type: "Generated", folder: "scan_07", files: SLICE_FILES },       // 7 Generated
+  { type: "Generated", folder: "scan_08", files: SLICE_FILES },       // 8 Generated
+  { type: "Generated", folder: "scan_09", files: SLICE_FILES },       // 9 Generated
+  { type: "Generated", folder: "scan_10", files: SLICE_FILES },       // 10 Generated
+  { type: "Generated", folder: "scan_11", files: SLICE_FILES },       // 11 Generated
+  { type: "Real_with_patho", folder: "scan_12", files: SLICE_FILES }, // 12 Real (with patho)
+  { type: "Generated", folder: "scan_13", files: SLICE_FILES },       // 13 Generated
+  { type: "Real_with_patho", folder: "scan_14", files: SLICE_FILES }, // 14 Real (with patho)
+  { type: "Real_wo_patho", folder: "scan_15", files: SLICE_FILES },   // 15 Real (w/o patho)
 ];
 
 const imageGroups = SCAN_CONFIG.map((cfg, idx) =>
@@ -488,7 +482,7 @@ const Classify = (props) => {
                 style={{maxWidth: '12rem', marginLeft: 0}}
                 className={"mt-4 flex cursor-pointer justify-center rounded-[0.2rem] space-x-5 transition duration-500 ease-in-out lg:px-8 py-4 font-ubuntu text-lg font-semibold shadow-md text-white bg-gray-800  shadow-gray-800  lg:hover:bg-green-400 lg:hover:text-darkBgLight"}
               >
-                <p className="tracking-wider">Get Results</p>
+                <p className="tracking-wider">Submit</p>
                 <CheckCircleIcon className="h-7 w-7 animate-pulse " />
               </motion.button>
             )}

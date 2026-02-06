@@ -152,9 +152,8 @@ const MainContainer = () => {
           </div>
           <div className="mt-5">
             <p className="tracking-wide  w-[50rem] text-gray-800 text-lg lg:leading-8">
-              The below are a few typical CT slice images of a chest study. You
-              will encounter 3 windows: Soft Tissue, Bone and Lung window
-              versions of the CT scans.
+              The images below show typical CT window types (Soft Tissue, Bone, Lung) for context. 
+              In the task you will see 15 scans in a set order; each scan has 8 slice images from one volume.
             </p>
           </div>
           <div className="flex flex-wrap space-x-4 justify-center mt-6">
@@ -170,50 +169,28 @@ const MainContainer = () => {
               className="h-[11rem] object-contain border-r-2"
               src="/lung.png"
             ></img>
-            {/* <img
-              className="h-[11rem] object-contain border-r-2"
-              src="/100461_2001_400_40_1-050.dcm.png"
-            ></img> */}
           </div>
           <div className="mt-6">
             <p className="tracking-wide  w-[50rem] text-gray-800 text-lg lg:leading-8">
-              In the following you will see a series of images, one at a time,
-              and you will need to decide whether the image is real or
-              algorithmically generated. The screen will look like this:
+              When you click "Proceed" you are assigned a radiologist ID (e.g. Radiologist A, B, C). 
+              The task screen shows one image at a time with "Scan X of 15" and "Image X of 8" at the top. 
+              Use the left/right arrows below the image to move through the 8 images in the current scan; 
+              use "Previous 8" / "Next 8" to move between scans.
             </p>
-          </div>
-          <div className="flex justify-center mt-6">
-            <img
-              className="h-[24rem] object-contain border-r-2"
-              src="/UI-Image.png"
-            ></img>
-            <img
-              className="h-[24rem] object-contain border-r-2"
-              src="/areaUI.png"
-            ></img>
-          </div>
-          
-          <div className="mt-6">
-            <p className="tracking-wide  w-[50rem] text-gray-800 text-lg lg:leading-8">
-              Now you would select "Real" or "Fake" based on your opinion of the image shown. If you select "Fake" 
-              please notice a sub question asking you to choose an option that best represents how fake the image looks like. 
-              After choosing a fakeness level, in a pop up window  (sample shown above) you will be asked to mark the areas that look fake, 
-              make sure to submit these selections as well.
-
-            </p>
-            
           </div>
           <div className="mt-6">
             <p className="tracking-wide  w-[50rem] text-gray-800 text-lg lg:leading-8">
-            Once you are sure of your choices you can click the "Submit" button which will change the screen to the next image. 
-              The progress bar on the right of the image informs you how many images are still
-              left for you to rate. In the end you will be asked to tell us your level of expertise with medical radiology 
-              and a "Finish" button will be available to complete the study. Upon clicking "Finish" wait for 2 seconds to see that 
-              a completion message is now displayed to you. If you wish to do the study once again, click on the "Go to Home" button 
-              and start the test again.
-
+              For each scan, choose "Real" or "Fake" for the image shown. If you choose "Fake", pick how fake it looks 
+              (Clearly Fake, Somewhat Real, or Almost Real). A pop-up will ask you to mark areas that look fake; 
+              click "Submit Snippets" to confirm. You can move through all 8 images in a scan with the arrows before moving to the next scan.
             </p>
-            
+          </div>
+          <div className="mt-6">
+            <p className="tracking-wide  w-[50rem] text-gray-800 text-lg lg:leading-8">
+              When you are done with the current scan, click "Next" to go to the next scan. On the last scan (Scan 15), 
+              the button says "Submit". Click "Submit" to save your responses and finish; you will 
+              be taken to a completion page. Click "Go to Home" there to do the study again.
+            </p>
           </div>
           <div className="mt-5 text-center">
             <p className="tracking-wide font-bold  w-[50rem] text-red-800 text-md not-italic lg:leading-8">
